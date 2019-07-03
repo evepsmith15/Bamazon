@@ -24,7 +24,7 @@ connection.connect(function (err) {
 
 //function lists the item you would like to buy from a list of 10 items
 function IDList() {
-  connection.query("SELECT * FROM products", function (err, results) {
+  connection.query("SELECT * FROM products", function (err, res) {
       if (err) throw err;
       inquirer.prompt([{
             name: "list",
@@ -51,13 +51,13 @@ function IDList() {
 
     //for order
     function order(id, currentStock) {
-    connection.query('Select * FROM products WHERE products_id = ' + id, function (err, res) {
+    connection.query('Select * FROM products WHERE id = ' + id, function (err, res) {
       if (err) {
         console.log(err)
       };
       if (currentStock <= res[0].stock_quantity) {
         var totalCost = res[0].price * currentStock;
-        console.log("Good news your order is in stock!");
+        console.log("Item in stock!");
         console.log("Your total cost for " + currentStock + " " + res[0].product_name + " is " + totalCost + " Thank you!");
 
         connection.query("UPDATE products SET stock_quantity = stock_quantity - " + currentStock + "WHERE item_id = " + ID);
@@ -67,7 +67,6 @@ function IDList() {
       IDList();
     });
   };
-  IDList();
   // choices: function () {
   //   var choiceArray = [];
   //   for (var i = 0; i < results.length; i++) {
