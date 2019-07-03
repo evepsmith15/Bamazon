@@ -25,58 +25,52 @@ connection.connect(function (err) {
 //function lists the item you would like to buy from a list of 10 items
 function IDList() {
   connection.query("SELECT * FROM products", function (err, results) {
-    if (err) throw err;
-    inquirer.prompt([{
-          name: "list",
-          type: "rawlist",
-          choices: ["Seven Wishes", "Super Bash Sisters", "Elf Ocarina", "Golden Butterflies",
-        "Masamune", "Phantom Mac", "Prince of the Skies", "Slay Station Portable", "Hero Tunic",
-      "Wave Combat Book", "Hero Wig"],
-          message: "What would you like to buy?"
-        },
-        {
-          name: "quantity",
-          type: "input",
-          message: "How many items would you like to buy?"
-        }
-      ])
-      .then(function (answer) {
-        var chosenItem;
-        for (var i = 0; i < results.length; i++) {
-          if (results[i].item_name === answer.choice) {
-            chosenItem = results[i];
-          }
-          return results[i];
-        }
-        
-        // determine the quantity of the item
-        if (chosenItem.stock_quantity >= parseInt(stock_quantity)) {
-          connection.query(
-            "UPDATE stock_quantity SET ? WHERE ?",
-            [{
-                stock_quantity
-              },
-              {
-                id: chosenItem.id
-              }
+      if (err) throw err;
+      inquirer.prompt([{
+            name: "list",
+            type: "rawlist",
+            choices: ["Seven Wishes", "Super Bash Sisters", "Elf Ocarina", "Golden Butterflies",
+              "Masamune", "Phantom Mac", "Prince of the Skies", "Slay Station Portable", "Hero Tunic",
+              "Wave Combat Book", "Hero Wig"
             ],
-            function (error) {
-              if (error) throw err;
-              console.log("Your order has been submitted!");
-              IDList();
-            }
-          );
-        } else {
-          console.log("Insufficient quantity!");
-          IDList();
-        }
-      });
+            message: "What would you like to buy?"
+          },
+          {
+            name: "quantity",
+            type: "input",
+            message: "How many items would you like to buy?"
+          }
+        ])
+        .then(function (answer) {
+          var quantity = answer.stock_quantity;
+          var chosenItem = answer.id;
+          order(chosenItem, quantity);
+        });
     });
-    // choices: function () {
-    //   var choiceArray = [];
-    //   for (var i = 0; i < results.length; i++) {
-    //     choiceArray.push(results[i].item_name);
-    //   }
-    //   return choiceArray; put outside
-    
   }
+
+    //for order
+    function order(id, currentStock) {
+    connection.query('Select * FROM products WHERE products_id = ' + id, function (err, res) {
+      if (err) {
+        console.log(err)
+      };
+      if (currentStock <= res[0].stock_quantity) {
+        var totalCost = res[0].price * currentStock;
+        console.log("Good news your order is in stock!");
+        console.log("Your total cost for " + currentStock + " " + res[0].product_name + " is " + totalCost + " Thank you!");
+
+        connection.query("UPDATE products SET stock_quantity = stock_quantity - " + currentStock + "WHERE item_id = " + ID);
+      } else {
+        console.log("Insufficient quantity for " + res[0].product_name + ".");
+      };
+      IDList();
+    });
+  };
+  IDList();
+  // choices: function () {
+  //   var choiceArray = [];
+  //   for (var i = 0; i < results.length; i++) {
+  //     choiceArray.push(results[i].item_name);
+  //   }
+  //   return choiceArray; put outside
