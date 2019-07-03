@@ -1,0 +1,48 @@
+DROP DATABASE IF EXISTS bamazon;
+CREATE DATABASE bamazon;
+
+USE bamazon;
+
+CREATE TABLE products (
+    id INT NOT NULL AUTO_INCREMENT,
+    product_name VARCHAR(50) NULL,
+    department_name VARCHAR(30) NULL,
+    price INT NULL,
+    stock_quantity INT NULL,
+    PRIMARY KEY (id)
+);
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Seven Wishes", "book", "15.99", "4");
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Super Bash Sisters", "video game", "59.99", "20");
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Elf Ocarina", "toys", "24.99", "0");
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Golden Butterflies", "album", "40.00", "1");
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Masamune", "toys", "169.00", "3");
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Phantom Mac", "electronics", "550.99", "30");
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Prince of the Skies", "book", "25.00", "66");
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Slay Station Portable", "electronics", "199.00", "23");
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Hero Tunic", "clothes", "212.00", "5");
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Wave Combat Book", "book", "40.00", "44");
+
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Hero Wig", "cosmetics", "55.00", "2");
+
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'
