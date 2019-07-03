@@ -1,8 +1,11 @@
 DROP DATABASE IF EXISTS bamazon;
+DROP DATABASE IF EXISTS department;
 
 CREATE DATABASE bamazon;
+CREATE DATABASE department;
 
 USE bamazon;
+USE department;
 
 CREATE TABLE products (
     id INT NOT NULL AUTO_INCREMENT,
@@ -12,6 +15,16 @@ CREATE TABLE products (
     stock_quantity INT NULL,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE department (
+department_id INT NOT NULL AUTO_INCREMENT,
+department_name VARCHAR(30) NULL,
+over_head_costs INT NULL AUTO_INCREMENT,
+product_sales INT NULL AUTO_INCREMENT,
+total_profit INT NULL, 
+PRIMARY KEY(department_id)
+);
+
 SELECT * FROM products;
 
 INSERT INTO products (id, product_name, department_name, price, stock_quantity)
