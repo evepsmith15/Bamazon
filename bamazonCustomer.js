@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require("cli-table");
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -26,6 +27,15 @@ connection.connect(function (err) {
 function IDList() {
   connection.query("SELECT * FROM products", function (err, res) {
     if (err) throw err;
+    //a table needs to be added that will push the data in the sql. 
+    var table = new Table ({
+      head: ["ID", "Product Name", "Department", "Price", "Quantity"],
+      colWidths: [10, 25, 25, 10, 14]
+    });
+    for (var i = 0; i < res.length; i++) {
+      table.push([res[i].id,res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
+				);
+    }
     inquirer.prompt([{
           name: "list",
           type: "rawlist",
@@ -46,7 +56,7 @@ function IDList() {
         var chosenItem = input.id;
         order(chosenItem, quantity);
           });
-      // };
+       });
 
   function order(id, currentStock) {
           connection.query('Select * FROM products WHERE = id' + id, function (err, res) {
@@ -68,8 +78,8 @@ function IDList() {
             }
 
       });
- // });
-}
+    };
+  }
 //for order
 // choices: function () {
 //   var choiceArray = [];
