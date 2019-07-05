@@ -45,8 +45,10 @@ function IDList() {
         var quantity = input.stock_quantity;
         var chosenItem = input.id;
         order(chosenItem, quantity);
+          });
+      // };
 
-        function order(id, currentStock) {
+  function order(id, currentStock) {
           connection.query('Select * FROM products WHERE = id' + id, function (err, res) {
             if (err) {
               console.log(err)
@@ -64,11 +66,9 @@ function IDList() {
               };
               IDList();
             }
-          });
-        };
 
       });
-  });
+ // });
 }
 //for order
 // choices: function () {

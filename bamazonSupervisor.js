@@ -40,7 +40,20 @@ function start() {
 }
 //view inventory exclusive to supervisor 
 function viewProductbyDepartment() {
-    
+    connection.query('SELECT * FROM department ', function(err, res){
+        if (err) throw (err);
+        console.log("Product Sales by Department");
+        console.log("____________________________"); //indent line
+        for(var i = 0; i < res.length; i++) {
+            console.log("Department ID: " + res[i].department_ID + 
+            " | " + "Department Name: " + res[i].department_name + 
+            " | " + "Over Head Cost: " + (res[i].over_head_costs).toFixed(2) + 
+            " | " + "Product Sales: " + (res[i].total_profit).toFixed(2) + 
+            " | " + "Total Profit: " + (res[i].total_profit - res[i].over_head_costs).toFixed(2));
+            console.log("________________________"); //indent line
+        }
+        start();
+    })
 }
 
 //add a new department 
@@ -61,6 +74,7 @@ inquirer.prompt([{
         else {return false;} //if the illegal number is an INT or DECIMAL
     }
 },
+{
     type: "input",
     name: "productSales", //Product Sales is needed to determine the total cost 
     message: "Product Sales: ",
@@ -74,7 +88,7 @@ inquirer.prompt([{
     connection.query('INSERT INTO department SET ?', {
         Department: answer.departName,
         OverHeadCosts: answer.OverHeadCost,
-        TotalCost: answer.productSales
+        TotalProfit: answer.productSales
     },
     function(err, res) {
         if(err) throw (err);
