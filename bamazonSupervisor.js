@@ -23,8 +23,8 @@ connection.connect(function (err) {
 
 //start the command list 
 function start() {
-inquier.prompt([{
-    type: list,
+    inquirer.prompt([{
+    type: "list",
     name: "select",
     message: "What would you like to do?",
     choices: ["View Product by Department", "Add Department", "Exit"]
@@ -36,7 +36,7 @@ inquier.prompt([{
         break;
         case "End session": console.log("Good-bye!");
     }
-})
+});
 }
 //view inventory exclusive to supervisor 
 function viewProductbyDepartment() {
@@ -45,6 +45,42 @@ function viewProductbyDepartment() {
 
 //add a new department 
 function addDepartment() {
+inquirer.prompt([{
+    type: "input",
+    name: "departName",
+    message: "Department Name: "
+},
+{
+    type: "input",
+    name: "OverHeadCost",
+    message: "Over Head Cost: ",
+    default: 0,
+    //using validate so the command must have an input for the code to work
+    validate: function(value) {
+        if (isNaN(value) === false) {return true;} //if the illegal number is (strings, dates, boolean, 0/0) 
+        else {return false;} //if the illegal number is an INT or DECIMAL
+    }
+},
+    type: "input",
+    name: "productSales", //Product Sales is needed to determine the total cost 
+    message: "Product Sales: ",
+    default: 0,
+    validate: function(val){
+        if (isNaN(value) === false) {return true;} //if the illegal number is (strings, dates, boolean, 0/0) 
+        else {return false;} //if the illegal number is an INT or DECIMAL
+    }
 
+}]).then(function(answer){
+    connection.query('INSERT INTO department SET ?', {
+        Department: answer.departName,
+        OverHeadCosts: answer.OverHeadCost,
+        TotalCost: answer.productSales
+    },
+    function(err, res) {
+        if(err) throw (err);
+        console.log("New department added.");
+    })
+    start();
+});
 }
 start();
