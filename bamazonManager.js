@@ -24,9 +24,19 @@ connection.connect(function (err) {
 
 //creates a new table and then displays the list of commands
 function storeCommands() {
-
-displayInventory();
-}
+    connection.query("SELECT * FROM products ", function(err, res){
+        var table = new Table ({
+            head: ["ID", "Product Name", "Department", "Price", "Quantity"],
+            colWidths: [10, 25, 25, 10, 14]
+        });
+        for (var i = 0; i < res.length; i++) {
+            table.push([res[i].id,res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
+            );
+        }
+            console.log(table.toString());
+            displayInventory();
+        });
+    };
 
 //gives you the commands for manager
 function displayInventory() {
@@ -67,8 +77,13 @@ function restockRequest() {
 
 //adds products to items already in the table 
 function restockProduct(id, quantity) {
+    connection.query("SELECTION * FROM products WHERE  id" + id, function(err, res){
+        if (err) throw(err)
+        connection.query("UPDATE products SET stock_quantity = stock_quantity + " + stock_quantity + "WHERE id" + id);
+        storeCommands();
+    });
+};
 
-}
 //adds a new request
 function addRequest() {
     inquire.prompt([{
