@@ -53,7 +53,8 @@ function IDList() {
         {
           type: "input",
           name: "quantity",
-          message: "How many items would you like to buy?"
+          message: "How many items would you like to buy?",
+          filter: Number
         },
       ])
       .then(function (input) {

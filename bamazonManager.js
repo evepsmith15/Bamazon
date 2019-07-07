@@ -43,7 +43,7 @@ function displayInventory() {
         type: "list",
         name: "command",
         message: "Choose what you would like to do.",
-        choices: ["Restock Product", "Add New Product", "Remove Existing Product"]
+        choices: ["Restock Product", "Add New Product", "Remove Existing Product", "Exit"]
     }]).then(function (answer) {
         switch (answer.command) {
             case "Restock Product":
@@ -73,12 +73,14 @@ function restockRequest() {
     inquirer.prompt([{
             type: "input",
             name: "id",
-            message: "What is the item ID that you would like to restock?"
+            message: "What is the item ID that you would like to restock?",
+            filter: Number
         },
         {
             type: "input",
             name: "Quantity",
-            message: "How much would you like to add?"
+            message: "How much would you like to add?",
+            filter: Number
         },
     ]).then(function (answer) {
         var qAdd = answer.Quantity;
@@ -90,8 +92,9 @@ function restockRequest() {
 //adds products to items already in the table 
 function restockProduct(id, quantity) {
     connection.query("SELECT * FROM products WHERE id = " + id, function (err, res) {
-        if (err) throw (err)
-        connection.query("UPDATE products SET stock_quantity = stock_quantity + " + stock_quantity + "WHERE id = " + id);
+        var productRes = res[0];
+        if (err) throw err;
+        connection.query("UPDATE products SET stock_quantity =  " + (quantity + productRes.stock_quantity) + "WHERE id = " + id);
         storeCommands();
     });
 };
@@ -101,7 +104,8 @@ function addRequest() {
     inquirer.prompt([{
             type: "input",
             name: "id",
-            message: "Enter ID number..."
+            message: "Enter ID number...",
+            filter: Number
         },
         {
             type: "input",
@@ -116,12 +120,14 @@ function addRequest() {
         {
             type: "input",
             name: "Price",
-            messasge: "What is the price of the product?"
+            messasge: "What is the price of the product?",
+            filter: Number
         },
         {
             type: "input",
             name: "Quantity",
-            message: "Enter the amount of the product..."
+            message: "Enter the amount of the product...",
+            filter: Number
         },
     ]).then(function (answer) {
         var id = answer.id;
