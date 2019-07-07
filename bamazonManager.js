@@ -24,102 +24,114 @@ connection.connect(function (err) {
 
 //creates a new table and then displays the list of commands
 function storeCommands() {
-    connection.query("SELECT * FROM products ", function(err, res){
-        var table = new Table ({
+    connection.query("SELECT * FROM products ", function (err, res) {
+        var table = new Table({
             head: ["ID", "Product Name", "Department", "Price", "Quantity"],
             colWidths: [10, 25, 25, 10, 14]
         });
         for (var i = 0; i < res.length; i++) {
-            table.push([res[i].id,res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
-            );
+            table.push([res[i].id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]);
         }
-            console.log(table.toString());
-            displayInventory();
-        });
-    };
+        console.log(table.toString());
+        displayInventory();
+    });
+};
 
 //gives you the commands for manager
 function displayInventory() {
     inquirer.prompt([{
-        type: "input",
+        type: "list",
         name: "command",
         message: "Choose what you would like to do.",
         choices: ["Restock Product", "Add New Product", "Remove Existing Product"]
-    }]).then(function(answer){
-        switch(answer.command){
-            case "Restock Product": restockRequest();
-            break;
-            case "Add New Product": addRequest();
-            break;
-            case "Remove Existing Product": removeRequest();
-            }
-        });
-    };
+    }]).then(function (answer) {
+        switch (answer.command) {
+            case "Restock Product":
+                restockRequest();
+                break;
+            case "Add New Product":
+                addRequest();
+                break;
+            case "Remove Existing Product":
+                removeRequest();
+                break;
+            case "Exit":
+                Exit();
+                break;
+        }
+    });
+};
+
+//quits the terminal
+function Exit() {
+    console.log("Good-bye!");
+    connection.end();
+}
 
 //requests an inventory restock. Input data into the table
 function restockRequest() {
-    inquire.prompt([{
-        type: "input",
-        name: "id",
-        message: "What is the item ID that you would like to restock?"
-    },
-    {
-        type: "input",
-        name: "Quantity",
-        message: "How much would you like to add?"
-    },
-    ]).then(function(answer){
+    inquirer.prompt([{
+            type: "input",
+            name: "id",
+            message: "What is the item ID that you would like to restock?"
+        },
+        {
+            type: "input",
+            name: "Quantity",
+            message: "How much would you like to add?"
+        },
+    ]).then(function (answer) {
         var qAdd = answer.Quantity;
         var ProductID = answer.id;
         restockProduct(ProductID, qAdd);
     });
-    };
+};
 
 //adds products to items already in the table 
 function restockProduct(id, quantity) {
-    connection.query("SELECTION * FROM products WHERE  id" + id, function(err, res){
-        if (err) throw(err)
-        connection.query("UPDATE products SET stock_quantity = stock_quantity + " + stock_quantity + "WHERE id" + id);
+    connection.query("SELECT * FROM products WHERE id = " + id, function (err, res) {
+        if (err) throw (err)
+        connection.query("UPDATE products SET stock_quantity = stock_quantity + " + stock_quantity + "WHERE id = " + id);
         storeCommands();
     });
 };
 
 //adds a new request
 function addRequest() {
-    inquire.prompt([{
-        type: "input",
-        name: "id",
-        message: "Enter ID number..."
-    },
-    {
-        type: "input",
-        name: "Name",
-        message: "Enter the name of the product..."
-    },
-    {
-        type: "input",
-        name: "Category",
-        message: "Enter the category of said product..."
-    },
-    {
-        type: "input",
-        name: "Price",
-        messasge: "What is the price of the product?"
-    },
-    {
-        type: "input",
-        name: "Quantity",
-        message: "Enter the amount of the product..."
-    },
-    ]).then(function(answer){
+    inquirer.prompt([{
+            type: "input",
+            name: "id",
+            message: "Enter ID number..."
+        },
+        {
+            type: "input",
+            name: "Name",
+            message: "Enter the name of the product..."
+        },
+        {
+            type: "input",
+            name: "Category",
+            message: "Enter the category of said product..."
+        },
+        {
+            type: "input",
+            name: "Price",
+            messasge: "What is the price of the product?"
+        },
+        {
+            type: "input",
+            name: "Quantity",
+            message: "Enter the amount of the product..."
+        },
+    ]).then(function (answer) {
         var id = answer.id;
         var name = answer.Name;
         var category = answer.Category;
         var price = answer.Price;
         var quantity = answer.Quantity;
         addProduct(id, name, category, price, quantity);
-        });
-    };
+    });
+};
 
 //adds new product to the table
 function addProduct(name, category, price, quantity) { //id not needed to be listed
@@ -129,11 +141,11 @@ function addProduct(name, category, price, quantity) { //id not needed to be lis
 
 //removes request when either rejected or new stock added
 function removeRequest() {
-    inquire.prompt([{
+    inquirer.prompt([{
         type: "input",
         name: "id",
         message: "What would you like to remove?"
-    }]).then(function(answer){
+    }]).then(function (answer) {
         var id = answer.id;
         removeProduct(id);
     });

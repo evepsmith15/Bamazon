@@ -5,14 +5,13 @@ CREATE DATABASE bamazon;
 CREATE DATABASE department;
 
 USE bamazon;
-USE department;
 
 CREATE TABLE products (
     id INT NOT NULL AUTO_INCREMENT,
     product_name VARCHAR(50) NULL,
     department_name VARCHAR(30) NULL,
-    price INT NULL,
-    stock_quantity INT NULL,
+    price DECIMAL (10, 2) NULL,
+    stock_quantity INT (100) NULL,
     PRIMARY KEY (id)
 );
 
