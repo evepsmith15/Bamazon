@@ -58,31 +58,27 @@ function IDList() {
         },
       ])
       .then(function (input) {
-        console.log(input.list);
-        var chosenItem = JSON.stringify(input.list);
-        console.log(chosenItem);
+       // console.log(input.list);
         var quantity = input.quantity;
-        var itemID = choices.indexOf(chosenItem);
+        var itemID = choices.indexOf(input.list);
+       // console.log(itemID);
+        //console.log(choices);
         order(itemID, quantity);
       });
   });
 
-  function order(id, currentStock) {
-    connection.query("SELECT * FROM products WHERE id = " + id, function (err, res) {
+  function order(id, quantity) {
+    connection.query("SELECT * FROM products WHERE id =? ", [id], function (err, res) {
       if (err) throw err;
-      if (res.length === 0) {
-        console.log('ERROR: Invalid Item ID. Try again!');
-        IDList();
-      } else {
         var productRes = res[0];
         if (quantity <= productRes.stock_quantity) {
           console.log("Item in stock!");
-          connection.query("UPDATE products SET stock_quantity = " +
-              (productRes.stock_quantity - currentStock) + "WHERE id = " + id),
+          connection.query("UPDATE products SET ? " +
+              (productRes.stock_quantity - quantity) + "WHERE ?" + id),
             function (err, res) {
               if (err) throw err;
-              var totalCost = res[0].price * currentStock;
-              console.log("Your total cost for " + currentStock + " " + res[0].product_name + " is " +
+              var totalCost = res[0].price * quantity;
+              console.log("Your total cost for " + quantity + " " + res[0].product_name + " is " +
                 totalCost + " Thank you!");
               connection.end();
             }
@@ -90,7 +86,6 @@ function IDList() {
           console.log("Insufficient quantity for " + res[0].product_name + ".");
           IDList();
         };
-      }
     });
   };
 }

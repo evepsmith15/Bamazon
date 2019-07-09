@@ -83,18 +83,26 @@ function restockRequest() {
             filter: Number
         },
     ]).then(function (answer) {
-        var qAdd = answer.Quantity;
+        var quantity = answer.Quantity;
+        //  console.log(answer.Quantity);
         var ProductID = answer.id;
-        restockProduct(ProductID, qAdd);
+        //   console.log(answer.id);
+        restockProduct(ProductID, quantity);
     });
 };
 
 //adds products to items already in the table 
 function restockProduct(id, quantity) {
-    connection.query("SELECT * FROM products WHERE id = " + id, function (err, res) {
+    connection.query("SELECT * FROM products WHERE id =? ", [id], function (err, res) {
         var productRes = res[0];
         if (err) throw err;
-        connection.query("UPDATE products SET stock_quantity =  " + (quantity + productRes.stock_quantity) + "WHERE id = " + id);
+        connection.query("UPDATE products SET ? WHERE ?", [{
+                stock_quantity: quantity
+            },
+            {
+                id: id
+            }
+        ], )
         storeCommands();
     });
 };
