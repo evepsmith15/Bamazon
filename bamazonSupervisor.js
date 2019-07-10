@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var Table = require("cli-table");
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -57,15 +58,14 @@ function viewProductbyDepartment() {
         console.log("____________________________"); //indent line
         var table = new Table({
             head: ["Department ID", "Department Name", "Overhead Costs", "Total Costs"],
-            colWidths: [10, 25, 12, 12]
+            colWidths: [10, 20, 25, 25]
         });
         for (var i = 0; i < res.length; i++) {
             table.push([
                 res[i].department_id,
                 res[i].department_name,
-                `$${res[i].over_head_costs}`
-                `$${res[i].total_profit}`
-            ])
+                res[i].over_head_costs,
+                res[i].total_profit]);
         }
         console.log(table.toString());
         start();
