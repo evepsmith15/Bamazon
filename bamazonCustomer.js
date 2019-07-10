@@ -33,7 +33,13 @@ function IDList() {
       colWidths: [10, 25, 25, 10, 14]
     });
     for (var i = 0; i < res.length; i++) {
-      table.push([res[i].id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]);
+      table.push(
+        [res[i].id,
+          res[i].product_name,
+          res[i].department_name,
+          res[i].price,
+          res[i].stock_quantity
+        ]);
     }
     console.log(table.toString()); //displays the table
     var choices = ["Seven Wishes", "Super Bash Sisters", "Elf Ocarina", "Golden Butterflies",
@@ -58,10 +64,10 @@ function IDList() {
         },
       ])
       .then(function (input) {
-       // console.log(input.list);
+        // console.log(input.list);
         var quantity = input.quantity;
         var itemID = choices.indexOf(input.list);
-       // console.log(itemID);
+        // console.log(itemID);
         //console.log(choices);
         order(itemID, quantity);
       });
@@ -70,22 +76,29 @@ function IDList() {
   function order(id, quantity) {
     connection.query("SELECT * FROM products WHERE id =? ", [id], function (err, res) {
       if (err) throw err;
-        var productRes = res[0];
-        if (quantity <= productRes.stock_quantity) {
+      console.log(id);
+      console.log(res);
+      for (var i = 0; i < res.length; i++) {
+        if (quantity < res[i].stock_quantity) {
           console.log("Item in stock!");
-          connection.query("UPDATE products SET ? " +
-              (productRes.stock_quantity - quantity) + "WHERE ?" + id),
+          connection.query("UPDATE products SET ? WHERE ?"), [{
+                stock_quantity: (stock_quantity - quantity)
+              },
+              {
+                id: id
+              }
+            ],
             function (err, res) {
               if (err) throw err;
               var totalCost = res[0].price * quantity;
-              console.log("Your total cost for " + quantity + " " + res[0].product_name + " is " +
-                totalCost + " Thank you!");
+              console.log("Your total cost for " + res[i].product_name + " is " + totalCost + " Thank you!");
               connection.end();
             }
         } else {
-          console.log("Insufficient quantity for " + res[0].product_name + ".");
+          console.log("Insufficient quantity for " + res[i].product_name + ".");
           IDList();
         };
+      }
     });
   };
 }
