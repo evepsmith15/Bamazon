@@ -37,7 +37,7 @@ function start() {
             case "Add Department":
                 addDepartment();
                 break;
-            case "End session":
+            case "Exit":
                 Exit();
                 break;
         }
@@ -51,20 +51,25 @@ function Exit() {
 
 //view inventory exclusive to supervisor 
 function viewProductbyDepartment() {
-    connection.query('SELECT * FROM department ', function (err, res) {
+    connection.query('SELECT * FROM department', function (err, res) {
         if (err) throw (err);
         console.log("Product Sales by Department");
         console.log("____________________________"); //indent line
+        var table = new Table({
+            head: ["Department ID", "Department Name", "Overhead Costs", "Total Costs"],
+            colWidths: [10, 25, 12, 12]
+        });
         for (var i = 0; i < res.length; i++) {
-            console.log("Department ID: " + res[i].department_ID +
-                " | " + "Department Name: " + res[i].department_name +
-                " | " + "Over Head Cost: " + (res[i].over_head_costs).toFixed(2) +
-                " | " + "Product Sales: " + (res[i].total_profit).toFixed(2) +
-                " | " + "Total Profit: " + (res[i].total_profit - res[i].over_head_costs).toFixed(2));
-            console.log("________________________"); //indent line
+            table.push([
+                res[i].department_id,
+                res[i].department_name,
+                `$${res[i].over_head_costs}`
+                `$${res[i].total_profit}`
+            ])
         }
+        console.log(table.toString());
         start();
-    })
+    });
 }
 
 //add a new department 
@@ -78,10 +83,9 @@ function addDepartment() {
             type: "input",
             name: "OverHeadCost",
             message: "Over Head Cost: ",
-            default: 0,
             //using validate so the command must have an input for the code to work
             validate: function (value) {
-                if (isNaN(value) === false) {
+                if (!isNaN(value) && value > 0) {
                     return true;
                 } //if the illegal number is (strings, dates, boolean, 0/0) 
                 else {
@@ -93,9 +97,8 @@ function addDepartment() {
             type: "input",
             name: "productSales", //Product Sales is needed to determine the total cost 
             message: "Product Sales: ",
-            default: 0,
-            validate: function (val) {
-                if (isNaN(value) === false) {
+            validate: function (value) {
+                if (!isNaN(value) && value > 0) {
                     return true;
                 } //if the illegal number is (strings, dates, boolean, 0/0) 
                 else {
@@ -106,15 +109,15 @@ function addDepartment() {
         }
     ]).then(function (answer) {
         connection.query('INSERT INTO department SET ?', {
-                Department: answer.departName,
-                OverHeadCosts: answer.OverHeadCost,
-                TotalProfit: answer.productSales
+                department_name: answer.departName,
+                over_head_costs: answer.OverHeadCost,
+                total_profit: (answer.productSales - answer.OverHeadCost)
             },
             function (err, res) {
                 if (err) throw (err);
                 console.log("New department added.");
             })
-        start();
+       viewProductbyDepartment();
     });
 }
 start();

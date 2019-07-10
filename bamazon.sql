@@ -1,8 +1,6 @@
 DROP DATABASE IF EXISTS bamazon;
-DROP DATABASE IF EXISTS department;
 
 CREATE DATABASE bamazon;
-CREATE DATABASE department;
 
 USE bamazon;
 
@@ -14,8 +12,6 @@ CREATE TABLE products (
     stock_quantity INT (100) NULL,
     PRIMARY KEY (id)
 );
-
-SELECT * FROM products;
 
 INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES 
@@ -41,6 +37,10 @@ PRIMARY KEY(department_id)
 
 INSERT INTO department (department_name, over_head_costs, total_profit)
 VALUES 
-("TOYS", 3000.00, 1200.00);
+("TOYS", 3000.00, 1200.00),
+("FOOD", 4500.00, 6969.00),
+("ELECTRONICS", 10000.00, 40000.00),
+("PHARMACY", 5199.00, 6000.00),
+("SPORTS", 1500.00, 1600.00);
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'
