@@ -30,7 +30,11 @@ function storeCommands() {
             colWidths: [10, 25, 25, 10, 14]
         });
         for (var i = 0; i < res.length; i++) {
-            table.push([res[i].id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]);
+            table.push([res[i].id, 
+                res[i].product_name, 
+                res[i].department_name, 
+                res[i].price, 
+                res[i].stock_quantity]);
         }
         console.log(table.toString());
         displayInventory();
@@ -94,7 +98,6 @@ function restockRequest() {
 //adds products to items already in the table 
 function restockProduct(id, quantity) {
     connection.query("SELECT * FROM products WHERE id =? ", [id], function (err, res) {
-        var productRes = res[0];
         if (err) throw err;
         connection.query("UPDATE products SET ? WHERE ?", [{
                 stock_quantity: quantity
@@ -109,12 +112,13 @@ function restockProduct(id, quantity) {
 
 //adds a new request
 function addRequest() {
-    inquirer.prompt([{
+    inquirer.prompt([
+       /* {
             type: "input",
             name: "id",
             message: "Enter ID number...",
             filter: Number
-        },
+        },*/
         {
             type: "input",
             name: "Name",
@@ -138,18 +142,23 @@ function addRequest() {
             filter: Number
         },
     ]).then(function (answer) {
-        var id = answer.id;
+    //    var id = answer.id;
         var name = answer.Name;
         var category = answer.Category;
         var price = answer.Price;
         var quantity = answer.Quantity;
-        addProduct(id, name, category, price, quantity);
+        addProduct(name, category, price, quantity);
     });
 };
 
 //adds new product to the table
 function addProduct(name, category, price, quantity) { //id not needed to be listed
-    connection.query('INSERT INTO products (id, product_name, department_name, price, stock_quantity) VALUES("' + id + '","' + name + '","' + category + '",' + price + ',' + quantity + ')');
+    connection.query('INSERT INTO products SET ?', [{
+        product_name: name,
+        department_name: category,
+        price: price,
+        stock_quantity: quantity
+    }]),
     storeCommands();
 }
 
