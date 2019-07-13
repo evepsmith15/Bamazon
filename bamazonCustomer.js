@@ -33,6 +33,7 @@ function IDList() {
       colWidths: [10, 25, 25, 10, 14]
     });
     for (var i = 0; i < res.length; i++) {
+
       table.push(
         [res[i].id,
           res[i].product_name,
@@ -64,11 +65,11 @@ function IDList() {
         },
       ])
       .then(function (input) {
-        // console.log(input.list);
+        //  console.log("THIS IS INPUTLIST" + input.list);
         var quantity = input.quantity;
-        var itemID = choices.indexOf(input.list);
+        var itemID = (choices.indexOf(input.list)) + 1;
         // console.log(itemID);
-        //console.log(choices);
+        // console.log("itemID: " + itemID + " quantity: " + quantity);
         order(itemID, quantity);
       });
   });
@@ -81,19 +82,17 @@ function IDList() {
       for (var i = 0; i < res.length; i++) {
         if (quantity < res[i].stock_quantity) {
           console.log("Item in stock!");
-          connection.query("UPDATE products SET ? WHERE ?"), [{
-                stock_quantity: (stock_quantity - quantity)
-              },
-              {
-                id: id
-              }
-            ],
-            function (err, res) {
-              if (err) throw err;
-              var totalCost = res[0].price * quantity;
-              console.log("Your total cost for " + res[i].product_name + " is " + totalCost + " Thank you!");
-              connection.end();
+          connection.query("UPDATE products SET ? WHERE ?", [{
+              stock_quantity: (res[i].stock_quantity - quantity)
+            },
+            {
+              id: id
             }
+          ], );
+          var totalCost = res[0].price * quantity;
+          console.log("Your total cost for " + res[i].product_name + " is " + totalCost + " Thank you!");
+          connection.end();
+
         } else {
           console.log("Insufficient quantity for " + res[i].product_name + ".");
           IDList();
