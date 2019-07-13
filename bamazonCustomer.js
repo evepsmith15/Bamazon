@@ -65,11 +65,11 @@ function IDList() {
         },
       ])
       .then(function (input) {
-        //  console.log("THIS IS INPUTLIST" + input.list);
+        // console.log(input.list);
         var quantity = input.quantity;
-        var itemID = (choices.indexOf(input.list)) + 1;
+        var itemID = choices.indexOf(input.list) + 1;
         // console.log(itemID);
-        // console.log("itemID: " + itemID + " quantity: " + quantity);
+        //console.log(choices);
         order(itemID, quantity);
       });
   });
@@ -83,16 +83,16 @@ function IDList() {
         if (quantity < res[i].stock_quantity) {
           console.log("Item in stock!");
           connection.query("UPDATE products SET ? WHERE ?", [{
-              stock_quantity: (res[i].stock_quantity - quantity)
-            },
-            {
-              id: id
-            }
-          ], );
-          var totalCost = res[0].price * quantity;
-          console.log("Your total cost for " + res[i].product_name + " is " + totalCost + " Thank you!");
-          connection.end();
-
+                stock_quantity: (res[i].stock_quantity - quantity)
+              },
+              {
+                id: id
+              }
+            ],);
+              var totalCost = res[0].price * quantity;
+              console.log("Your total cost for " + res[i].product_name + " is " + totalCost + " Thank you!");
+              connection.end();
+              
         } else {
           console.log("Insufficient quantity for " + res[i].product_name + ".");
           IDList();
